@@ -1,4 +1,9 @@
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using ManterCursosAPI.Data;
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddDbContext<ManterCursosAPIContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("ManterCursosAPIContext") ?? throw new InvalidOperationException("Connection string 'ManterCursosAPIContext' not found.")));
 
 // Add services to the container.
 

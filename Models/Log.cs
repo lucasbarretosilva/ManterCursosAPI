@@ -8,13 +8,17 @@
 
         public DateTime DataInclusao { get; set; }
 
-        public DateTime DataUltAlteracao { get; set; }
+        public DateTime? DataUltAlteracao { get; set; }
 
-        public string Curso { get; set; } = string.Empty;
+        public string CursoId { get; set; } = string.Empty;
 
         public int AdministradorId { get; set; }
 
+       
+
         public Administrador? Administrador { get; set; }
+
+        public Curso? Curso { get; set; }
 
 
     }

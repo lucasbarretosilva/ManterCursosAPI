@@ -21,9 +21,11 @@ namespace ManterCursosAPI.Models
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
         public DateTime DataTermino { get; set; }
 
-        public int QtdAlunos { get; set; }
+        public int? QtdAlunos { get; set; }
 
         public int CategoriaId { get; set; }
+
+        public bool Ativo { get; set; }
 
         public Categoria? Categoria { get; set; }
 
