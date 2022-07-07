@@ -128,7 +128,12 @@ namespace ManterCursosAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<Curso>> PostCurso(Curso curso)
         {
-            try { 
+            try {
+               
+
+
+
+
                 Boolean AgendaCheia = ( _context.Curso.Any( c => c.DataInicio <= curso.DataTermino && c.DataTermino >= curso.DataInicio || c.DataInicio == curso.DataInicio && c.DataTermino == curso.DataTermino));
 
                 if(AgendaCheia){
@@ -160,7 +165,15 @@ namespace ManterCursosAPI.Controllers
               {
               return Problem("Entity set 'ManterCursosAPIContext.Curso'  is null.");
               }
-            _context.Curso.Add(curso);
+
+                Curso existeIgual = AcharIgual(curso);
+
+                if (existeIgual != default && existeIgual.CursoId != 0)
+                {
+                    return BadRequest(new { message = "Curso já cadastrado." });
+                }
+                _context.Curso.Add(curso);
+
             await _context.SaveChangesAsync();
 
                 Log log = new Log
@@ -246,6 +259,14 @@ namespace ManterCursosAPI.Controllers
            //erro não encontrado
            return 0;
 
+        }
+
+        Curso AcharIgual(Curso curso)
+        {
+            Curso CursoIgual =  _context.Curso.Where(x=> x.Descricao.ToUpper() == curso.Descricao.ToUpper() && x.CursoId != curso.CursoId).FirstOrDefault();
+             
+
+            return CursoIgual;
         }
 
     }
