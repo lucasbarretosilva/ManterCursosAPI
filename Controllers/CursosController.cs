@@ -65,6 +65,12 @@ namespace ManterCursosAPI.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutCurso(int id, Curso curso)
         {
+            var logPorCurso = await _context.Log.FirstOrDefaultAsync(x => x.CursoId == curso.CursoId);
+
+            logPorCurso.DataUltAlteracao = DateTime.Now;
+
+            _context.Log.Update(logPorCurso);
+
             try
             {
                 Boolean AgendaCheia = (_context.Curso.Any(c => c.DataInicio <= curso.DataTermino && c.DataTermino >= curso.DataInicio || c.DataInicio == curso.DataInicio && c.DataTermino == curso.DataTermino));
