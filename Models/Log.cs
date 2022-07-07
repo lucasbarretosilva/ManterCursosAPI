@@ -10,7 +10,7 @@
 
         public DateTime? DataUltAlteracao { get; set; }
 
-        public string CursoId { get; set; } = string.Empty;
+        public int CursoId { get; set; }
 
         public int AdministradorId { get; set; }
 

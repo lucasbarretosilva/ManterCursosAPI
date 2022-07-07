@@ -32,6 +32,16 @@ namespace ManterCursosAPI.Controllers
             return await _context.Curso.ToListAsync();
         }
 
+        [HttpGet("cursosAtivos/")]
+        public async Task<ActionResult<IEnumerable<Curso>>> GetCursosAtivos()
+        {
+            if (_context.Curso == null)
+            {
+                return NotFound();
+            }
+            return await _context.Curso.Where(x=>x.Ativo).ToListAsync();
+        }
+
         // GET: api/Cursos/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Curso>> GetCurso(int id)
@@ -120,6 +130,7 @@ namespace ManterCursosAPI.Controllers
                      return BadRequest(new {mensagem = "Existe(m) curso(s) planejados(s) dentro do período informado."});
 
                 }
+           
 
                 int filtraErros = BuscarErros(curso.DataInicio, curso.DataTermino, curso.CursoId);
 
@@ -146,7 +157,22 @@ namespace ManterCursosAPI.Controllers
             _context.Curso.Add(curso);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetCurso", new { id = curso.CursoId }, curso);
+                Log log = new Log
+                {
+                    DataInclusao = DateTime.Now,
+                    DataUltAlteracao = DateTime.Now,
+                    Alteracao = "Curso Cadastrado",
+                    AdministradorId = 1,
+                    CursoId = curso.CursoId
+                };
+                 _context.Log.Add(log);
+
+
+                await _context.SaveChangesAsync();
+
+
+
+                return CreatedAtAction("GetCurso", new { id = curso.CursoId }, curso);
 
             }
             catch
@@ -156,7 +182,7 @@ namespace ManterCursosAPI.Controllers
         }
 
         // DELETE: api/Cursos/5
-        [HttpDelete("{id}")]
+        [HttpPut("DeleteLogico/")]
         public async Task<IActionResult> DeleteCurso(int id)
         {
             if (_context.Curso == null)
@@ -169,7 +195,8 @@ namespace ManterCursosAPI.Controllers
                 return NotFound();
             }
 
-            _context.Curso.Remove(curso);
+            curso.Ativo = false;
+            _context.Curso.Update(curso);
             await _context.SaveChangesAsync();
 
             return NoContent();

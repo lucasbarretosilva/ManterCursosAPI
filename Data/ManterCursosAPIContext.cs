@@ -17,5 +17,9 @@ namespace ManterCursosAPI.Data
         public DbSet<ManterCursosAPI.Models.Curso>? Curso { get; set; }
 
         public DbSet<ManterCursosAPI.Models.Categoria>? Categoria { get; set; }
+
+        public DbSet<ManterCursosAPI.Models.Log>? Log { get; set; }
+
+        public DbSet<ManterCursosAPI.Models.Administrador>? Administrador { get; set; }
     }
 }
