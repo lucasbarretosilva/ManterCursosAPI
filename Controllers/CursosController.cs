@@ -263,7 +263,7 @@ namespace ManterCursosAPI.Controllers
 
         Curso AcharIgual(Curso curso)
         {
-            Curso CursoIgual =  _context.Curso.Where(x=> x.Descricao.ToUpper() == curso.Descricao.ToUpper() && x.CursoId != curso.CursoId).FirstOrDefault();
+            Curso CursoIgual =  _context.Curso.Where(x=> x.Descricao.ToUpper() == curso.Descricao.ToUpper() && x.CursoId != curso.CursoId && x.Ativo).FirstOrDefault();
              
 
             return CursoIgual;
