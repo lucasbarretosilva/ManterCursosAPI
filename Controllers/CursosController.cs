@@ -39,7 +39,7 @@ namespace ManterCursosAPI.Controllers
             {
                 return NotFound();
             }
-            return await _context.Curso.Where(x=>x.Ativo).ToListAsync();
+            return await _context.Curso.Where(x=>x.Ativo).Include(y=>y.Categoria).ToListAsync();
         }
 
         // GET: api/Cursos/5
@@ -68,7 +68,8 @@ namespace ManterCursosAPI.Controllers
             var logPorCurso = await _context.Log.FirstOrDefaultAsync(x => x.CursoId == curso.CursoId);
 
             logPorCurso.DataUltAlteracao = DateTime.Now;
-
+            logPorCurso.Alteracao = "Curso Atualizado";
+            curso.Ativo = true;
             _context.Log.Update(logPorCurso);
 
             try
@@ -78,7 +79,7 @@ namespace ManterCursosAPI.Controllers
             if (AgendaCheia)
             {
 
-                return BadRequest(new { mensagem = "Existe(m) curso(s) planejados(s) dentro do período informado." });
+                return BadRequest(new { message = "Existe(m) curso(s) planejados(s) dentro do período informado." });
 
             }
 
@@ -134,11 +135,11 @@ namespace ManterCursosAPI.Controllers
 
 
 
-                Boolean AgendaCheia = ( _context.Curso.Any( c => c.DataInicio <= curso.DataTermino && c.DataTermino >= curso.DataInicio || c.DataInicio == curso.DataInicio && c.DataTermino == curso.DataTermino));
+                Boolean AgendaCheia = ( _context.Curso.Any( c => c.DataInicio <= curso.DataTermino && c.DataTermino >= curso.DataInicio && c.Ativo || c.DataInicio == curso.DataInicio && c.DataTermino == curso.DataTermino && c.Ativo));
 
                 if(AgendaCheia){
 
-                     return BadRequest(new {mensagem = "Existe(m) curso(s) planejados(s) dentro do período informado."});
+                     return BadRequest(new {message = "Existe(m) curso(s) planejados(s) dentro do período informado."});
 
                 }
            
@@ -172,6 +173,7 @@ namespace ManterCursosAPI.Controllers
                 {
                     return BadRequest(new { message = "Curso já cadastrado." });
                 }
+                curso.Ativo = true;
                 _context.Curso.Add(curso);
 
             await _context.SaveChangesAsync();
@@ -201,14 +203,31 @@ namespace ManterCursosAPI.Controllers
         }
 
         // DELETE: api/Cursos/5
-        [HttpPut("DeleteLogico/")]
-        public async Task<IActionResult> DeleteCurso(int id)
+        [HttpPut("DeleteLogico/{CursoId}")]
+        public async Task<IActionResult> DeleteCurso(int CursoId)
         {
+            
+            
+            
+            var logPorCurso = await _context.Log.FirstOrDefaultAsync(x => x.CursoId == CursoId);
+
+            logPorCurso.DataUltAlteracao = DateTime.Now;
+            logPorCurso.Alteracao = "Curso Excluído Logicamente";
+
+
             if (_context.Curso == null)
             {
                 return NotFound();
             }
-            var curso = await _context.Curso.FindAsync(id);
+            var curso = await _context.Curso.FindAsync(CursoId);
+
+            if(curso.DataTermino < DateTime.Now)
+            {
+                return BadRequest(new { message = "Um Curso já concluído não pode ser deletado."});
+            }
+
+
+
             if (curso == null)
             {
                 return NotFound();
@@ -221,9 +240,9 @@ namespace ManterCursosAPI.Controllers
             return NoContent();
         }
 
-        private bool CursoExists(int id)
+        private bool CursoExists(int CursoId)
         {
-            return (_context.Curso?.Any(e => e.CursoId == id)).GetValueOrDefault();
+            return (_context.Curso?.Any(e => e.CursoId == CursoId)).GetValueOrDefault();
         }
 
 
@@ -263,7 +282,7 @@ namespace ManterCursosAPI.Controllers
 
         Curso AcharIgual(Curso curso)
         {
-            Curso CursoIgual =  _context.Curso.Where(x=> x.Descricao.ToUpper() == curso.Descricao.ToUpper() && x.CursoId != curso.CursoId && x.Ativo).FirstOrDefault();
+            Curso CursoIgual =  _context.Curso.Where(x=> x.Descricao.ToUpper() == curso.Descricao.ToUpper() && x.CursoId != curso.CursoId && x.Ativo==true).FirstOrDefault();
              
 
             return CursoIgual;

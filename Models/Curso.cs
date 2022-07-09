@@ -23,7 +23,7 @@ namespace ManterCursosAPI.Models
 
         public int? QtdAlunos { get; set; }
 
-        public int CategoriaId { get; set; }
+        public int? CategoriaId { get; set; }
 
         public bool Ativo { get; set; }
 
