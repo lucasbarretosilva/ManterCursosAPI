@@ -74,7 +74,7 @@ namespace ManterCursosAPI.Controllers
 
             try
             {
-                Boolean AgendaCheia = (_context.Curso.Any(c => c.DataInicio <= curso.DataTermino && c.DataTermino >= curso.DataInicio || c.DataInicio == curso.DataInicio && c.DataTermino == curso.DataTermino));
+                Boolean AgendaCheia = (_context.Curso.Any(c => c.DataInicio <= curso.DataTermino && c.DataTermino >= curso.DataInicio && c.CursoId !=curso.CursoId || c.DataInicio == curso.DataInicio && c.DataTermino == curso.DataTermino && c.CursoId != curso.CursoId));
 
             if (AgendaCheia)
             {
