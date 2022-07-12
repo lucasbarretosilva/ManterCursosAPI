@@ -249,12 +249,10 @@ namespace ManterCursosAPI.Controllers
        
 
 
-        // cada erro vetado pelas regras de negócio irão retornar um integer para serem tratados
-        // dentro da requisição post (salvar) e da requisição put (atualizar).
         int BuscarErros(DateTime inicioCurso, DateTime fimCurso, int cursoId)
         {
             
-            //ICollection<Curso> ChoqueDatas = ValidaDataInicio(inicioCurso, fimCurso, cursoId);
+            
             DateTime hoje = DateTime.Now.Date;
 
 

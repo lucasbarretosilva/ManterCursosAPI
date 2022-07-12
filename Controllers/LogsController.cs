@@ -29,7 +29,7 @@ namespace ManterCursosAPI.Controllers
           {
               return NotFound();
           }
-            return await _context.Log.Include(x=> x.Administrador).Include(x=> x.Curso).ToListAsync();
+            return await _context.Log.Include(x=> x.Administrador).Include(x=> x.Curso).OrderByDescending(x=>x.DataUltAlteracao).ToListAsync();
         }
 
         // GET: api/Logs/5
