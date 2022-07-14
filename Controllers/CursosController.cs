@@ -74,12 +74,12 @@ namespace ManterCursosAPI.Controllers
 
             try
             {
-                Boolean AgendaCheia = (_context.Curso.Any(c => c.DataInicio <= curso.DataTermino && c.DataTermino >= curso.DataInicio && c.CursoId !=curso.CursoId || c.DataInicio == curso.DataInicio && c.DataTermino == curso.DataTermino && c.CursoId != curso.CursoId));
+                Boolean AgendaCheia = (_context.Curso.Any(c => c.DataInicio <= curso.DataTermino && c.DataTermino >= curso.DataInicio && c.CursoId !=curso.CursoId && c.Ativo || c.DataInicio == curso.DataInicio && c.DataTermino == curso.DataTermino && c.CursoId != curso.CursoId && c.Ativo));
 
             if (AgendaCheia)
             {
 
-                return BadRequest(new { message = "Existe(m) curso(s) planejados(s) dentro do período informado." });
+                return BadRequest(new { message = "Existe(m) curso(s) planejados(s) dentro do período informado. Error(AC)" });
 
             }
 
@@ -130,39 +130,40 @@ namespace ManterCursosAPI.Controllers
         public async Task<ActionResult<Curso>> PostCurso(Curso curso)
         {
             try {
-               
 
 
 
 
-                Boolean AgendaCheia = ( _context.Curso.Any( c => c.DataInicio <= curso.DataTermino && c.DataTermino >= curso.DataInicio && c.Ativo || c.DataInicio == curso.DataInicio && c.DataTermino == curso.DataTermino && c.Ativo));
 
-                if(AgendaCheia){
+                Boolean AgendaCheia = (_context.Curso.Any(c => c.DataInicio <= curso.DataTermino && c.DataTermino >= curso.DataInicio && c.Ativo || c.DataInicio == curso.DataInicio && c.DataTermino == curso.DataTermino && c.Ativo));
 
-                     return BadRequest(new {message = "Existe(m) curso(s) planejados(s) dentro do período informado."});
+                if (AgendaCheia)
+                {
+
+                    return BadRequest(new { message = "Existe(m) curso(s) planejados(s) dentro do período informado. Error(AC)" });
 
                 }
-           
+
 
                 int filtraErros = BuscarErros(curso.DataInicio, curso.DataTermino, curso.CursoId);
 
                 switch (filtraErros)
                 {
                     case 1:
-                        return BadRequest(new { message = "A data de fim do curso não pode ser menor que a de início"});
+                        return BadRequest(new { message = "A data de fim do curso não pode ser menor que a de início" });
                         break;
 
-                        case 2:
+                    case 2:
                         return BadRequest(new { message = "A data de inicio do curso não pode ser menor que a de hoje" });
                         break;
 
-                        
+
 
                 }
 
 
 
-              if (_context.Curso == null)
+                if (_context.Curso == null)
               {
               return Problem("Entity set 'ManterCursosAPIContext.Curso'  is null.");
               }
